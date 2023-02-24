@@ -1,16 +1,13 @@
-// 1. Імпортуємо хук
 import { useDispatch } from "react-redux";
-// 3. Імпортуємо генератор екшену
-import { deleteTask, toggleCompleted } from "redux/actions";
-
 import { MdClose } from "react-icons/md";
+import { deleteTask, toggleCompleted } from "../../redux/actions";
 import css from "./Task.module.css";
 
 export const Task = ({ task }) => {
-  // 2. Отримуємо посилання на функцію відправки екшенів
   const dispatch = useDispatch();
 
   const handleDelete = () => dispatch(deleteTask(task.id));
+
   const handleToggle = () => dispatch(toggleCompleted(task.id));
 
   return (
@@ -18,11 +15,11 @@ export const Task = ({ task }) => {
       <input
         type="checkbox"
         className={css.checkbox}
-        onChange={handleToggle}
         checked={task.completed}
+        onChange={handleToggle}
       />
       <p className={css.text}>{task.text}</p>
-      <button onClick={handleDelete} className={css.btn}>
+      <button className={css.btn} onClick={handleDelete}>
         <MdClose size={24} />
       </button>
     </div>

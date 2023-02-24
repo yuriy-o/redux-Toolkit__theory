@@ -1,20 +1,25 @@
+import { combineReducers } from "redux";
 import { statusFilters } from "./constants";
 
 const tasksInitialState = [
-  { id: 0, text: "Learn HTML and CSS", completed: true },
-  { id: 1, text: "Get good at JavaScript", completed: true },
-  { id: 2, text: "Master React", completed: false },
-  { id: 3, text: "Discover Redux", completed: false },
-  { id: 4, text: "Build amazing apps", completed: false },
+  { id: 0, text: "Знищити путіна", completed: false },
+  { id: 1, text: "Спалити москву", completed: false },
+  { id: 2, text: "Повернути Херсон", completed: true },
+  { id: 3, text: "Перемога з нами", completed: true },
+  { id: 4, text: "Повернути Крим", completed: false },
+  { id: 5, text: "Працюючі закони", completed: false },
+  { id: 6, text: "Розмовляти українською", completed: true },
 ];
 
-export const tasksReducer = (state = tasksInitialState, action) => {
+// Відповідає лише за оновлення властивості tasks
+// Тепер значенням параметра state буде масив завдань
+const tasksReducer = (state = tasksInitialState, action) => {
   switch (action.type) {
-    case "tasks/addTask":
+    case "taski/addTask":
       return [...state, action.payload];
-    case "tasks/deleteTask":
+    case "taski/deleteTask":
       return state.filter(task => task.id !== action.payload);
-    case "tasks/toggleCompleted":
+    case "taski/toggleCompleted":
       return state.map(task => {
         if (task.id !== action.payload) {
           return task;
@@ -30,7 +35,9 @@ const filtersInitialState = {
   status: statusFilters.all,
 };
 
-export const filtersReducer = (state = filtersInitialState, action) => {
+// Відповідає лише за оновлення властивості filters
+// Тепер значенням параметра state буде об'єкт фільтрів
+const filtersReducer = (state = filtersInitialState, action) => {
   switch (action.type) {
     case "filters/setStatusFilter":
       return {
@@ -41,3 +48,8 @@ export const filtersReducer = (state = filtersInitialState, action) => {
       return state;
   }
 };
+
+export const rootReducer = combineReducers({
+  taski: tasksReducer,
+  filters: filtersReducer,
+});

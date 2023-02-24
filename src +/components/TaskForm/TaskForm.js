@@ -1,24 +1,15 @@
-// 1. Імпортуємо хук
 import { useDispatch } from "react-redux";
-// 3. Імпортуємо генератор екшену
-import { addTask } from "redux/actions";
-
 import { Button } from "components/Button/Button";
+import { addTask } from "../../redux/actions";
 import css from "./TaskForm.module.css";
 
 export const TaskForm = () => {
-  // 2. Отримуємо посилання на функцію відправки екшенів
   const dispatch = useDispatch();
 
   const handleSubmit = event => {
     event.preventDefault();
-
     const form = event.target;
-    // console.log("value", form.elements.text.value);
-
-    //4.
     dispatch(addTask(form.elements.text.value));
-
     form.reset();
   };
 
