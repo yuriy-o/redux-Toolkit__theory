@@ -1,12 +1,15 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { tasksReducer } from "./tasksSlice";
 import { filtersReducer } from "./filtersSlice";
+import logger from "redux-logger";
 
 export const store = configureStore({
   reducer: {
     tasks: tasksReducer,
     filters: filtersReducer,
   },
+  //! Додаю логер для консолі
+  middleware: [...getDefaultMiddleware(), logger],
 });
 
 //! Redux
