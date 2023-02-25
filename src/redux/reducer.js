@@ -1,5 +1,4 @@
-//! Re-write #1 → код викликає помилку "The object notation for `createReducer` is deprecated, and will be removed in RTK 2.0. Please use the 'builder callback' notation instead: https://redux-toolkit.js.org/api/createReducer"
-//? Тому переписав код використовуючи "builder callback"
+//! Re-write #1 using Immer
 import { createReducer } from "@reduxjs/toolkit";
 import { statusFilters } from "./constants";
 import {
@@ -19,31 +18,81 @@ const tasksInitialState = [
   { id: 6, text: "Розмовляти українською", completed: true },
 ];
 
-export const tasksReducer = createReducer(tasksInitialState, builder => {
-  builder
-    .addCase(addTask, (state, action) => {
-      state.push(action.payload);
-    })
-    .addCase(deleteTask, (state, action) => {
-      return state.filter(task => task.id !== action.payload);
-    })
-    .addCase(toggleCompleted, (state, action) => {
-      const task = state.find(task => task.id === action.payload);
-      if (task) {
+export const tasksReducer = createReducer(tasksInitialState, {
+  [addTask]: (state, action) => {
+    state.push(action.payload);
+  },
+
+  [deleteTask]: (state, action) => {
+    const index = state.findIndex(task => task.id === action.payload);
+    state.splice(index, 1);
+  },
+  [toggleCompleted]: (state, action) => {
+    for (const task of state) {
+      if (task.id === action.payload) {
         task.completed = !task.completed;
       }
-    });
+    }
+  },
 });
 
 const filtersInitialState = {
   status: statusFilters.all,
 };
 
-export const filtersReducer = createReducer(filtersInitialState, builder => {
-  builder.addCase(setStatusFilter, (state, action) => {
-    state.push(action.payload);
-  });
+export const filtersReducer = createReducer(filtersInitialState, {
+  [setStatusFilter]: (state, action) => {
+    // ✅ Immer замінить це на операцію оновлення
+    state.status = action.payload;
+  },
 });
+
+//! Re-write #2 → код викликає помилку "The object notation for `createReducer` is deprecated, and will be removed in RTK 2.0. Please use the 'builder callback' notation instead: https://redux-toolkit.js.org/api/createReducer"
+//? Тому переписав код використовуючи "builder callback"
+// import { createReducer } from "@reduxjs/toolkit";
+// import { statusFilters } from "./constants";
+// import {
+//   addTask,
+//   deleteTask,
+//   toggleCompleted,
+//   setStatusFilter,
+// } from "./actions";
+
+// const tasksInitialState = [
+//   { id: 0, text: "Знищити путіна", completed: false },
+//   { id: 1, text: "Спалити москву", completed: false },
+//   { id: 2, text: "Повернути Херсон", completed: true },
+//   { id: 3, text: "Перемога з нами", completed: true },
+//   { id: 4, text: "Повернути Крим", completed: false },
+//   { id: 5, text: "Працюючі закони", completed: false },
+//   { id: 6, text: "Розмовляти українською", completed: true },
+// ];
+
+// export const tasksReducer = createReducer(tasksInitialState, builder => {
+//   builder
+//     .addCase(addTask, (state, action) => {
+//       state.push(action.payload);
+//     })
+//     .addCase(deleteTask, (state, action) => {
+//       return state.filter(task => task.id !== action.payload);
+//     })
+//     .addCase(toggleCompleted, (state, action) => {
+//       const task = state.find(task => task.id === action.payload);
+//       if (task) {
+//         task.completed = !task.completed;
+//       }
+//     });
+// });
+
+// const filtersInitialState = {
+//   status: statusFilters.all,
+// };
+
+// export const filtersReducer = createReducer(filtersInitialState, builder => {
+//   builder.addCase(setStatusFilter, (state, action) => {
+//     state.status = action.payload;
+//   });
+// });
 
 //! код викликає помилку "The object notation for `createReducer` is deprecated, and will be removed in RTK 2.0. Please use the 'builder callback' notation instead: https://redux-toolkit.js.org/api/createReducer"
 // import { createReducer } from "@reduxjs/toolkit";
