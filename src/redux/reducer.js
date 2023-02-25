@@ -1,4 +1,6 @@
-// import { combineReducers } from "redux";
+//! Re-write #1 → код викликає помилку "The object notation for `createReducer` is deprecated, and will be removed in RTK 2.0. Please use the 'builder callback' notation instead: https://redux-toolkit.js.org/api/createReducer"
+//? Тому переписав код використовуючи "builder callback"
+import { createReducer } from "@reduxjs/toolkit";
 import { statusFilters } from "./constants";
 import {
   addTask,
@@ -17,48 +19,81 @@ const tasksInitialState = [
   { id: 6, text: "Розмовляти українською", completed: true },
 ];
 
-// Відповідає лише за оновлення властивості tasks
-// Тепер значенням параметра state буде масив завдань
-export const tasksReducer = (state = tasksInitialState, action) => {
-  switch (action.type) {
-    case addTask.type:
-      return [...state, action.payload];
-    case deleteTask.type:
+export const tasksReducer = createReducer(tasksInitialState, builder => {
+  builder
+    .addCase(addTask, (state, action) => {
+      state.push(action.payload);
+    })
+    .addCase(deleteTask, (state, action) => {
       return state.filter(task => task.id !== action.payload);
-    case toggleCompleted.type:
-      return state.map(task => {
-        if (task.id !== action.payload) {
-          return task;
-        }
-        return { ...task, completed: !task.completed };
-      });
-    default:
-      return state;
-  }
-};
+    })
+    .addCase(toggleCompleted, (state, action) => {
+      const task = state.find(task => task.id === action.payload);
+      if (task) {
+        task.completed = !task.completed;
+      }
+    });
+});
 
 const filtersInitialState = {
   status: statusFilters.all,
 };
 
-// Відповідає лише за оновлення властивості filters
-// Тепер значенням параметра state буде об'єкт фільтрів
-export const filtersReducer = (state = filtersInitialState, action) => {
-  switch (action.type) {
-    case setStatusFilter.type:
-      return {
-        ...state,
-        status: action.payload,
-      };
-    default:
-      return state;
-  }
-};
+export const filtersReducer = createReducer(filtersInitialState, builder => {
+  builder.addCase(setStatusFilter, (state, action) => {
+    state.push(action.payload);
+  });
+});
 
-//! del
-// export const rootReducer = combineReducers({
-//   tasks: tasksReducer,
-//   filters: filtersReducer,
+//! код викликає помилку "The object notation for `createReducer` is deprecated, and will be removed in RTK 2.0. Please use the 'builder callback' notation instead: https://redux-toolkit.js.org/api/createReducer"
+// import { createReducer } from "@reduxjs/toolkit";
+// import { statusFilters } from "./constants";
+// import {
+//   addTask,
+//   deleteTask,
+//   toggleCompleted,
+//   setStatusFilter,
+// } from "./actions";
+
+// const tasksInitialState = [
+//   { id: 0, text: "Знищити путіна", completed: false },
+//   { id: 1, text: "Спалити москву", completed: false },
+//   { id: 2, text: "Повернути Херсон", completed: true },
+//   { id: 3, text: "Перемога з нами", completed: true },
+//   { id: 4, text: "Повернути Крим", completed: false },
+//   { id: 5, text: "Працюючі закони", completed: false },
+//   { id: 6, text: "Розмовляти українською", completed: true },
+// ];
+
+// export const tasksReducer = createReducer(tasksInitialState, {
+//   [addTask]: (state, action) => {
+//     return [...state, action.payload];
+//   },
+
+//   [deleteTask]: (state, action) => {
+//     return state.filter(task => task.id !== action.payload);
+//   },
+//   [toggleCompleted]: (state, action) => {
+//     return state.map(task => {
+//       if (task.id !== action.payload) {
+//         return task;
+//       }
+//       return { ...task, completed: !task.completed };
+//     });
+//   },
+// });
+
+// const filtersInitialState = {
+//   status: statusFilters.all,
+// };
+
+// export const filtersReducer = createReducer(filtersInitialState, {
+//   [setStatusFilter]: (state, action) => {
+//     return {
+//       ...state,
+//       status: action.payload,
+//     };
+//   },
 // });
 
 //! Redux
@@ -112,7 +147,7 @@ export const filtersReducer = (state = filtersInitialState, action) => {
 //       return state;
 //   }
 // };
-
+//! del
 // export const rootReducer = combineReducers({
 //   tasks: tasksReducer,
 //   filters: filtersReducer,
