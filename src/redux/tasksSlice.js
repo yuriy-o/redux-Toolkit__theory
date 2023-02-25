@@ -1,12 +1,5 @@
-//! Re-write #1 using Immer
-import { createReducer } from "@reduxjs/toolkit";
-import { statusFilters } from "./constants";
-import {
-  addTask,
-  deleteTask,
-  toggleCompleted,
-  setStatusFilter,
-} from "./actions";
+//! Re-write #3 using createSlice
+import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 const tasksInitialState = [
   { id: 0, text: "Знищити путіна", completed: false },
@@ -18,34 +11,90 @@ const tasksInitialState = [
   { id: 6, text: "Розмовляти українською", completed: true },
 ];
 
-export const tasksReducer = createReducer(tasksInitialState, {
-  [addTask]: (state, action) => {
-    state.push(action.payload);
-  },
-
-  [deleteTask]: (state, action) => {
-    const index = state.findIndex(task => task.id === action.payload);
-    state.splice(index, 1);
-  },
-  [toggleCompleted]: (state, action) => {
-    for (const task of state) {
-      if (task.id === action.payload) {
-        task.completed = !task.completed;
+const tasksSlice = createSlice({
+  name: "tasks",
+  initialState: tasksInitialState,
+  reducers: {
+    addTask: {
+      reducer(state, action) {
+        state.push(action.payload);
+      },
+      prepare(text) {
+        return {
+          payload: {
+            text,
+            id: nanoid(),
+            completed: false,
+          },
+        };
+      },
+    },
+    deleteTask(state, action) {
+      const index = state.findIndex(task => task.id === action.payload);
+      state.splice(index, 1);
+    },
+    toggleCompleted(state, action) {
+      for (const task of state) {
+        if (task.id === action.payload) {
+          task.completed = !task.completed;
+          break;
+        }
       }
-    }
+    },
   },
 });
 
-const filtersInitialState = {
-  status: statusFilters.all,
-};
+export const { addTask, deleteTask, toggleCompleted } = tasksSlice.actions;
+export const tasksReducer = tasksSlice.reducer;
 
-export const filtersReducer = createReducer(filtersInitialState, {
-  [setStatusFilter]: (state, action) => {
-    // ✅ Immer замінить це на операцію оновлення
-    state.status = action.payload;
-  },
-});
+//! Re-write #1 using Immer
+// import { createReducer } from "@reduxjs/toolkit";
+// import { statusFilters } from "./constants";
+// import {
+//   addTask,
+//   deleteTask,
+//   toggleCompleted,
+//   setStatusFilter,
+// } from "./actions";
+
+// const tasksInitialState = [
+//   { id: 0, text: "Знищити путіна", completed: false },
+//   { id: 1, text: "Спалити москву", completed: false },
+//   { id: 2, text: "Повернути Херсон", completed: true },
+//   { id: 3, text: "Перемога з нами", completed: true },
+//   { id: 4, text: "Повернути Крим", completed: false },
+//   { id: 5, text: "Працюючі закони", completed: false },
+//   { id: 6, text: "Розмовляти українською", completed: true },
+// ];
+
+// export const tasksReducer = createReducer(tasksInitialState, {
+//   [addTask]: (state, action) => {
+//     state.push(action.payload);
+//   },
+
+//   [deleteTask]: (state, action) => {
+//     const index = state.findIndex(task => task.id === action.payload);
+//     state.splice(index, 1);
+//   },
+//   [toggleCompleted]: (state, action) => {
+//     for (const task of state) {
+//       if (task.id === action.payload) {
+//         task.completed = !task.completed;
+//       }
+//     }
+//   },
+// });
+
+// const filtersInitialState = {
+//   status: statusFilters.all,
+// };
+
+// export const filtersReducer = createReducer(filtersInitialState, {
+//   [setStatusFilter]: (state, action) => {
+//     // ✅ Immer замінить це на операцію оновлення
+//     state.status = action.payload;
+//   },
+// });
 
 //! Re-write #2 → код викликає помилку "The object notation for `createReducer` is deprecated, and will be removed in RTK 2.0. Please use the 'builder callback' notation instead: https://redux-toolkit.js.org/api/createReducer"
 //? Тому переписав код використовуючи "builder callback"

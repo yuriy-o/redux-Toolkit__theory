@@ -6,7 +6,7 @@ import { getStatusFilter } from "redux/selectors";
 
 // Додаю акшен
 import { useDispatch } from "react-redux";
-import { setStatusFilter } from "redux/actions";
+import { setStatusFilter } from "redux/delete/actions";
 
 import { Button } from "components/Button/Button";
 import css from "./StatusFilter.module.css";
